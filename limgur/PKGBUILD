@@ -1,0 +1,29 @@
+# Contributor: Danny Tatom <dannytatom[at]gmail.com>
+
+pkgname=limgur
+pkgver=1.0.2
+pkgrel=1
+pkgdesc="CLI to Imgur, letting you upload and delete images."
+arch=('i686' 'x86_64')
+url="http://github.com/dannytatom/limgur"
+depends=('ruby' 'curl')
+makedepends=('git')
+license=('MIT')
+groups=('multimedia')
+
+build(){
+  cd ${srcdir}
+  curl -L -O http://gemcutter.org/gems/curb-0.6.2.1.gem
+  gem install curb-0.6.2.1.gem
+  git clone git://github.com/dannytatom/limgur.git
+  cd limgur/lib
+  chown root:root limgur.rb
+  mkdir -p ${pkgdir}/usr/lib/ruby/1.9.1/limgur
+  cp limgur.rb ${pkgdir}/usr/lib/ruby/1.9.1/limgur/limgur.rb
+  cd ${srcdir}
+  cd limgur/bin
+  chmod +x limgur
+  chown root:root limgur
+  mkdir -p ${pkgdir}/usr/bin
+  cp limgur ${pkgdir}/usr/bin/limgur
+}
