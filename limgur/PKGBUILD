@@ -1,29 +1,34 @@
 # Contributor: Danny Tatom <dannytatom[at]gmail.com>
+# Maintainer: James Pearson <james.m.pearson+arch@gmail.com>
 
 pkgname=limgur
 pkgver=1.0.2
-pkgrel=1
+pkgrel=2
 pkgdesc="CLI to Imgur, letting you upload and delete images."
 arch=('i686' 'x86_64')
-url="http://github.com/dannytatom/limgur"
-depends=('ruby' 'curl')
+url="http://github.com/xiongchiamiov/limgur"
+depends=('ruby' 'ruby-curb')
 makedepends=('git')
+optdepends=('scrot: for direct screenshot-upload capabilities')
 license=('MIT')
 groups=('multimedia')
+source=('http://github.com/xiongchiamiov/limgur/tarball/v1.0.2')
+md5sums=('802381110593e0b9f90c117a4bebe0ee')
 
 build(){
   cd ${srcdir}
-  curl -L -O http://gemcutter.org/gems/curb-0.6.2.1.gem
-  gem install curb-0.6.2.1.gem
-  git clone git://github.com/dannytatom/limgur.git
-  cd limgur/lib
-  chown root:root limgur.rb
-  mkdir -p ${pkgdir}/usr/lib/ruby/1.9.1/limgur
-  cp limgur.rb ${pkgdir}/usr/lib/ruby/1.9.1/limgur/limgur.rb
-  cd ${srcdir}
-  cd limgur/bin
+  
+  cd xiongchiamiov-limgur-032bc53/lib
+  local _libdir="$(ruby -e 'print $:.grep(/\/usr\/lib\/ruby\/[\d\.]+$/)[0]')"
+  mkdir -p ${pkgdir}${_libdir}/limgur
+  install -o root -g root limgur.rb ${pkgdir}${_libdir}/limgur/limgur.rb
+  
+  cd ../bin
   chmod +x limgur
-  chown root:root limgur
   mkdir -p ${pkgdir}/usr/bin
-  cp limgur ${pkgdir}/usr/bin/limgur
+  install -o root -g root limgur ${pkgdir}/usr/bin/limgur
+  
+  cd ..
+  install -D -m644 README.md ${pkgdir}/usr/share/doc/${pkgname}/README
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
 }
